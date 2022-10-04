@@ -1,5 +1,10 @@
 const table = document.querySelector("#table");
 
+const gameOver = false;
+const blackTurn = false;
+const redTurn = true;
+const scoreBlack = 12;
+const scoreRed = 12;
 const board = [
   [0, 1, 0, 1, 0, 1, 0, 1],
   [1, 0, 1, 0, 1, 0, 1, 0],
@@ -13,11 +18,8 @@ const board = [
 
 function setCheckerBoard(): void {
   for (let i = 0; i < 8; i++) {
-    console.log(i);
     for (let j = 0; j < 8; j++) {
-      console.log("j");
       if (board[i][j] === 1) {
-        console.log("j is 1");
         setCheckerSquare(i, j, "red");
       } else if (board[i][j] === -1) {
         setCheckerSquare(i, j, "black");
