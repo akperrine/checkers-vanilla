@@ -121,7 +121,39 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 "use strict";
 
 var table = document.querySelector("#table");
-console.log(table);
+var board = [[0, 1, 0, 1, 0, 1, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [-1, 0, -1, 0, -1, 0, -1, 0], [0, -1, 0, -1, 0, -1, 0, -1], [-1, 0, -1, 0, -1, 0, -1, 0]];
+
+function setCheckerBoard() {
+  for (var i = 0; i < 8; i++) {
+    console.log(i);
+
+    for (var j = 0; j < 8; j++) {
+      console.log("j");
+
+      if (board[i][j] === 1) {
+        console.log("j is 1");
+        setCheckerSquare(i, j, "red");
+      } else if (board[i][j] === -1) {
+        setCheckerSquare(i, j, "black");
+      }
+    }
+  }
+}
+
+function arrayCoordinatesToId(y, x) {
+  return (y * 8 + x).toString();
+}
+
+function setCheckerSquare(indexY, indexX, color) {
+  var idNumber = arrayCoordinatesToId(indexY, indexX);
+  var currentCell = document.getElementById(idNumber);
+
+  if (currentCell) {
+    currentCell.innerHTML = "<div class=\"checker ".concat(color, "-checker\"></div>");
+  }
+}
+
+setCheckerBoard();
 },{}],"../../../.nvm/versions/node/v16.17.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -150,7 +182,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56243" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59813" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
