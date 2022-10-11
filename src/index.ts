@@ -1,7 +1,6 @@
 const table = document.querySelector("#table");
 
 const gameOver = false;
-const blackTurn = false;
 const redTurn = true;
 const scoreBlack = 12;
 const scoreRed = 12;
@@ -63,9 +62,5 @@ function setCheckerSquare(indexY: number, indexX: number, color: string): void {
     currentCell.innerHTML = `<div class="checker ${color}-checker"></div>`;
   }
 }
-
-// function checkPieceInSquare(event: MouseEvent) {
-//   console.log(event.target);
-// }
 
 setCheckerBoard();
