@@ -16,6 +16,20 @@ const board = [
   [-1, 0, -1, 0, -1, 0, -1, 0],
 ];
 
+function clickablePiece() {
+  return document.querySelectorAll(".checker").forEach((piece): void => {
+    if (piece) {
+      const pieceWithChecker = piece.closest("td");
+      if (pieceWithChecker) {
+        piece.addEventListener("click", () => {
+          const boardNumber = pieceWithChecker.id;
+          console.log(boardNumber);
+        });
+      }
+    }
+  });
+}
+
 function setCheckerBoard(): void {
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
@@ -26,6 +40,7 @@ function setCheckerBoard(): void {
       }
     }
   }
+  clickablePiece();
 }
 
 function arrayCoordinatesToId(y: number, x: number): string {
@@ -39,5 +54,9 @@ function setCheckerSquare(indexY: number, indexX: number, color: string): void {
     currentCell.innerHTML = `<div class="checker ${color}-checker"></div>`;
   }
 }
+
+// function checkPieceInSquare(event: MouseEvent) {
+//   console.log(event.target);
+// }
 
 setCheckerBoard();
