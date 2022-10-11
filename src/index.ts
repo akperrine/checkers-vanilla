@@ -1,4 +1,5 @@
 const table = document.querySelector("#table");
+const scoreBox = document.querySelector(".score-box");
 
 const gameOver = false;
 const redTurn = true;
@@ -15,6 +16,15 @@ const board = [
   [-1, 0, -1, 0, -1, 0, -1, 0],
 ];
 
+function updateScore() {
+  if (scoreBox) {
+    return (scoreBox.innerHTML = `
+    <span>Black Pieces: ${scoreBlack}</span>
+    <span>Red Pieces: ${scoreRed}</span>
+    `);
+  }
+}
+
 function boardNumberToMatrix(boardNumber: number): number {
   const firstArrayIndex = Math.floor(boardNumber / 8);
   const secondArrayIndex = boardNumber % 8;
@@ -22,20 +32,17 @@ function boardNumberToMatrix(boardNumber: number): number {
 }
 
 function clickablePiece() {
-  return document.querySelectorAll(".checker").forEach((piece): void => {
-    if (piece) {
+  return document
+    .querySelectorAll(".checker")
+    .forEach((piece: Element): number | null => {
       const pieceWithChecker = piece.closest("td");
       if (pieceWithChecker) {
         piece.addEventListener("click", () => {
-          const boardNumber = parseInt(pieceWithChecker.id);
-          console.log(
-            boardNumber,
-            `firstArrayIndex: ${boardNumberToMatrix(boardNumber)}`
-          );
+          return parseInt(pieceWithChecker.id);
         });
       }
-    }
-  });
+      return null;
+    });
 }
 
 function setCheckerBoard(): void {
@@ -49,6 +56,7 @@ function setCheckerBoard(): void {
     }
   }
   clickablePiece();
+  updateScore();
 }
 
 function arrayCoordinatesToId(y: number, x: number): string {
