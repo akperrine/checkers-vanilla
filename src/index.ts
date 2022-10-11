@@ -16,14 +16,23 @@ const board = [
   [-1, 0, -1, 0, -1, 0, -1, 0],
 ];
 
+function boardNumberToMatrix(boardNumber: number): number {
+  const firstArrayIndex = Math.floor(boardNumber / 8);
+  const secondArrayIndex = boardNumber % 8;
+  return board[firstArrayIndex][secondArrayIndex];
+}
+
 function clickablePiece() {
   return document.querySelectorAll(".checker").forEach((piece): void => {
     if (piece) {
       const pieceWithChecker = piece.closest("td");
       if (pieceWithChecker) {
         piece.addEventListener("click", () => {
-          const boardNumber = pieceWithChecker.id;
-          console.log(boardNumber);
+          const boardNumber = parseInt(pieceWithChecker.id);
+          console.log(
+            boardNumber,
+            `firstArrayIndex: ${boardNumberToMatrix(boardNumber)}`
+          );
         });
       }
     }

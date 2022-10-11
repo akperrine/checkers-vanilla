@@ -86,13 +86,18 @@ const board = [
         0
     ], 
 ];
+function boardNumberToMatrix(boardNumber) {
+    const firstArrayIndex = Math.floor(boardNumber / 8);
+    const secondArrayIndex = boardNumber % 8;
+    return board[firstArrayIndex][secondArrayIndex];
+}
 function clickablePiece() {
     return document.querySelectorAll(".checker").forEach((piece)=>{
         if (piece) {
             const pieceWithChecker = piece.closest("td");
             if (pieceWithChecker) piece.addEventListener("click", ()=>{
-                const boardNumber = pieceWithChecker.id;
-                console.log(boardNumber);
+                const boardNumber = parseInt(pieceWithChecker.id);
+                console.log(boardNumber, `firstArrayIndex: ${boardNumberToMatrix(boardNumber)}`);
             });
         }
     });
