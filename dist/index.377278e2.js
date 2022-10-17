@@ -1,7 +1,7 @@
 const table = document.querySelector("#table");
 const scoreBox = document.querySelector(".score-box");
 const gameOver = false;
-const redTurn = true;
+const redTurn = false;
 const scoreBlack = 12;
 const scoreRed = 12;
 const board = [
@@ -20,7 +20,7 @@ const board = [
         0,
         1,
         0,
-        1,
+        0,
         0,
         1,
         0
@@ -86,6 +86,7 @@ const board = [
         0
     ], 
 ];
+const selectedPiece = null;
 function updateScore() {
     if (scoreBox) return scoreBox.innerHTML = `
     <span>Black Pieces: ${scoreBlack}</span>
@@ -127,7 +128,7 @@ function arrayCoordinatesToId(y, x) {
 function setCheckerSquare(indexY, indexX, color) {
     const idNumber = arrayCoordinatesToId(indexY, indexX);
     const currentCell = document.getElementById(idNumber);
-    if (currentCell) currentCell.innerHTML = `<div class="checker ${color}-checker king"></div>`;
+    if (currentCell) currentCell.innerHTML = `<div class="checker ${color}-checker"></div>`;
 }
 setCheckerBoard();
 function checkColorsTurn(boardNumber, target) {
@@ -137,6 +138,9 @@ function checkColorsTurn(boardNumber, target) {
     else return;
 }
 function moveChoice(yCoord, xCoord, target, colorNumber) {
+    document.querySelectorAll(".highlight").forEach((square)=>{
+        square.classList.remove("highlight");
+    });
     // console.log(board[xCoord], event);
     // const downOneLeft = board[yCoord + 1][xCoord - 1];
     // const downTwoLeft = board[yCoord + 2][xCoord - 1];
@@ -147,12 +151,38 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
     // const upOneRight = board[yCoord - 1][xCoord + 1];
     // const upTwoRight = board[yCoord - 2][xCoord + 1];
     const oppositeColor = colorNumber * -1;
-    if (target.classList.contains("king")) console.log("king");
-// if (downOneLeft === 0 && colorNumber === 1) {
-//   console.log("hi");
-//   console.log(target.classList.contains("king"));
-//   // document.getElementById()
-// }
+    if (colorNumber === 1 || target.classList.contains("king")) {
+        if (board[yCoord + 1][xCoord - 1] === 0) {
+            const id = arrayCoordinatesToId(yCoord + 1, xCoord - 1);
+            document.getElementById(id).classList.add("highlight");
+        } else if (board[yCoord + 1][xCoord - 1] === oppositeColor && board[yCoord + 2][xCoord - 2] === 0) {
+            const id1 = arrayCoordinatesToId(yCoord + 2, xCoord - 2);
+            document.getElementById(id1).classList.add("highlight");
+        }
+        if (board[yCoord + 1][xCoord + 1] === 0) {
+            const id2 = arrayCoordinatesToId(yCoord + 1, xCoord + 1);
+            document.getElementById(id2).classList.add("highlight");
+        } else if (board[yCoord + 1][xCoord + 1] === oppositeColor && board[yCoord + 2][xCoord + 2] === 0) {
+            const id3 = arrayCoordinatesToId(yCoord + 2, xCoord + 2);
+            document.getElementById(id3).classList.add("highlight");
+        }
+    }
+    if (colorNumber === -1 || target.classList.contains("king")) {
+        if (board[yCoord - 1][xCoord - 1] === 0) {
+            const id4 = arrayCoordinatesToId(yCoord - 1, xCoord - 1);
+            document.getElementById(id4).classList.add("highlight");
+        } else if (board[yCoord - 1][xCoord - 1] === oppositeColor && board[yCoord - 2][xCoord - 2] === 0) {
+            const id5 = arrayCoordinatesToId(yCoord - 2, xCoord - 2);
+            document.getElementById(id5).classList.add("highlight");
+        }
+        if (board[yCoord - 1][xCoord + 1] === 0) {
+            const id6 = arrayCoordinatesToId(yCoord - 1, xCoord + 1);
+            document.getElementById(id6).classList.add("highlight");
+        } else if (board[yCoord - 1][xCoord + 1] === oppositeColor && board[yCoord - 2][xCoord + 2] === 0) {
+            const id7 = arrayCoordinatesToId(yCoord - 2, xCoord + 2);
+            document.getElementById(id7).classList.add("highlight");
+        }
+    }
 }
 
 //# sourceMappingURL=index.377278e2.js.map
