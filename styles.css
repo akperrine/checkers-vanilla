@@ -46,3 +46,7 @@ td {
 .light {
   background-color: rgb(195, 105, 105);
 }
+
+.highlight {
+  opacity: 0.5;
+}

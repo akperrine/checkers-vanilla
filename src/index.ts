@@ -9,7 +9,7 @@ const board = [
   [0, 1, 0, 1, 0, 1, 0, 1],
   [1, 0, 1, 0, 1, 0, 1, 0],
   [0, 1, 0, 1, 0, 1, 0, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0],
+  [-1, 0, 0, 0, 0, 0, -1, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [-1, 0, -1, 0, -1, 0, -1, 0],
   [0, -1, 0, -1, 0, -1, 0, -1],
@@ -25,24 +25,26 @@ function updateScore() {
   }
 }
 
-function boardNumberToMatrix(boardNumber: number): number {
+function boardNumberToMatrix(boardNumber: number): number[] {
   const firstArrayIndex = Math.floor(boardNumber / 8);
   const secondArrayIndex = boardNumber % 8;
-  return board[firstArrayIndex][secondArrayIndex];
+  return [firstArrayIndex, secondArrayIndex];
+  // return board[firstArrayIndex][secondArrayIndex];
 }
 
 function clickablePiece() {
-  return document
-    .querySelectorAll(".checker")
-    .forEach((piece: Element): number | null => {
-      const pieceWithChecker = piece.closest("td");
-      if (pieceWithChecker) {
-        piece.addEventListener("click", () => {
-          return parseInt(pieceWithChecker.id);
-        });
-      }
-      return null;
-    });
+  return document.querySelectorAll(".checker").forEach((piece: Element) => {
+    const pieceWithChecker = piece.closest("td");
+    if (pieceWithChecker) {
+      piece.addEventListener("click", (event) => {
+        const boardNumber = parseInt(pieceWithChecker.id);
+        if (event.target) {
+          const target = event.target;
+          return checkColorsTurn(boardNumber, target);
+        }
+      });
+    }
+  });
 }
 
 function setCheckerBoard(): void {
@@ -67,8 +69,51 @@ function setCheckerSquare(indexY: number, indexX: number, color: string): void {
   const idNumber = arrayCoordinatesToId(indexY, indexX);
   const currentCell = document.getElementById(idNumber);
   if (currentCell) {
-    currentCell.innerHTML = `<div class="checker ${color}-checker"></div>`;
+    currentCell.innerHTML = `<div class="checker ${color}-checker king"></div>`;
   }
 }
 
 setCheckerBoard();
+
+function checkColorsTurn(boardNumber: number, target: EventTarget) {
+  const boardCoordinates = boardNumberToMatrix(boardNumber);
+  if (redTurn && board[boardCoordinates[0]][boardCoordinates[1]] === 1) {
+    moveChoice(boardCoordinates[0], boardCoordinates[1], target, 1);
+  } else if (
+    !redTurn &&
+    board[boardCoordinates[0]][boardCoordinates[1]] === -1
+  ) {
+    moveChoice(boardCoordinates[0], boardCoordinates[1], target, -1);
+  } else {
+    return;
+  }
+}
+
+function moveChoice(
+  yCoord: number,
+  xCoord: number,
+  target: EventTarget,
+  colorNumber: number
+): void {
+  // console.log(board[xCoord], event);
+  // const downOneLeft = board[yCoord + 1][xCoord - 1];
+  // const downTwoLeft = board[yCoord + 2][xCoord - 1];
+  // const downOneRight = board[yCoord + 1][xCoord + 1];
+  // const downTwoRight = board[yCoord + 2][xCoord + 1];
+
+  // const UpOneLeft = board[yCoord - 1][xCoord - 1];
+  // const upTwoLeft = board[yCoord - 2][xCoord - 1];
+  // const upOneRight = board[yCoord - 1][xCoord + 1];
+  // const upTwoRight = board[yCoord - 2][xCoord + 1];
+
+  const oppositeColor = colorNumber * -1;
+
+  if (target.classList.contains("king")) {
+    console.log("king");
+  }
+  // if (downOneLeft === 0 && colorNumber === 1) {
+  //   console.log("hi");
+  //   console.log(target.classList.contains("king"));
+  //   // document.getElementById()
+  // }
+}
