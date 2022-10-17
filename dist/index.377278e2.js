@@ -1,10 +1,10 @@
 const table = document.querySelector("#table");
 const scoreBox = document.querySelector(".score-box");
-const gameOver = false;
-const redTurn = false;
-const scoreBlack = 12;
-const scoreRed = 12;
-const board = [
+let gameOver = false;
+let redTurn = true;
+let scoreBlack = 12;
+let scoreRed = 12;
+let board = [
     [
         0,
         1,
@@ -86,7 +86,7 @@ const board = [
         0
     ], 
 ];
-const selectedPiece = null;
+let selectedPiece = null;
 function updateScore() {
     if (scoreBox) return scoreBox.innerHTML = `
     <span>Black Pieces: ${scoreBlack}</span>
@@ -183,6 +183,7 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
             document.getElementById(id7).classList.add("highlight");
         }
     }
+    selectedPiece = document.getElementById(arrayCoordinatesToId(yCoord + 1, xCoord - 1));
 }
 
 //# sourceMappingURL=index.377278e2.js.map
