@@ -20,7 +20,7 @@ let board = [
         0,
         1,
         0,
-        0,
+        1,
         0,
         1,
         0
@@ -36,13 +36,13 @@ let board = [
         1
     ],
     [
-        -1,
         0,
         0,
         0,
         0,
         0,
-        -1,
+        0,
+        0,
         0
     ],
     [
@@ -86,7 +86,7 @@ let board = [
         0
     ], 
 ];
-let selectedPiece = null;
+let selectedSquare = null;
 function updateScore() {
     if (scoreBox) return scoreBox.innerHTML = `
     <span>Black Pieces: ${scoreBlack}</span>
@@ -100,7 +100,6 @@ function boardNumberToMatrix(boardNumber) {
         firstArrayIndex,
         secondArrayIndex
     ];
-// return board[firstArrayIndex][secondArrayIndex];
 }
 function clickablePiece() {
     return document.querySelectorAll(".checker").forEach((piece)=>{
@@ -109,7 +108,11 @@ function clickablePiece() {
             const boardNumber = parseInt(pieceWithChecker.id);
             if (event.target) {
                 const target = event.target;
-                return checkColorsTurn(boardNumber, target);
+                const data = [
+                    checkColorsTurn(boardNumber, target),
+                    makeMove(boardNumber, target), 
+                ];
+                return data;
             }
         });
     });
@@ -128,33 +131,29 @@ function arrayCoordinatesToId(y, x) {
 function setCheckerSquare(indexY, indexX, color) {
     const idNumber = arrayCoordinatesToId(indexY, indexX);
     const currentCell = document.getElementById(idNumber);
-    if (currentCell) currentCell.innerHTML = `<div class="checker ${color}-checker"></div>`;
+    if (currentCell) currentCell.innerHTML = `<div class="piece ${color}-piece"></div>`;
 }
 setCheckerBoard();
 function checkColorsTurn(boardNumber, target) {
     const boardCoordinates = boardNumberToMatrix(boardNumber);
-    if (redTurn && board[boardCoordinates[0]][boardCoordinates[1]] === 1) moveChoice(boardCoordinates[0], boardCoordinates[1], target, 1);
-    else if (!redTurn && board[boardCoordinates[0]][boardCoordinates[1]] === -1) moveChoice(boardCoordinates[0], boardCoordinates[1], target, -1);
-    else return;
+    if (redTurn && board[boardCoordinates[0]][boardCoordinates[1]] === 1) {
+        selectedSquare = document.getElementById(boardNumber.toString());
+        moveChoice(boardCoordinates[0], boardCoordinates[1], target, 1);
+    } else if (!redTurn && board[boardCoordinates[0]][boardCoordinates[1]] === -1) {
+        selectedSquare = document.getElementById(boardNumber.toString());
+        moveChoice(boardCoordinates[0], boardCoordinates[1], target, -1);
+    } else return;
 }
 function moveChoice(yCoord, xCoord, target, colorNumber) {
     document.querySelectorAll(".highlight").forEach((square)=>{
         square.classList.remove("highlight");
     });
-    // console.log(board[xCoord], event);
-    // const downOneLeft = board[yCoord + 1][xCoord - 1];
-    // const downTwoLeft = board[yCoord + 2][xCoord - 1];
-    // const downOneRight = board[yCoord + 1][xCoord + 1];
-    // const downTwoRight = board[yCoord + 2][xCoord + 1];
-    // const UpOneLeft = board[yCoord - 1][xCoord - 1];
-    // const upTwoLeft = board[yCoord - 2][xCoord - 1];
-    // const upOneRight = board[yCoord - 1][xCoord + 1];
-    // const upTwoRight = board[yCoord - 2][xCoord + 1];
     const oppositeColor = colorNumber * -1;
+    console.log(selectedSquare);
     if (colorNumber === 1 || target.classList.contains("king")) {
         if (board[yCoord + 1][xCoord - 1] === 0) {
             const id = arrayCoordinatesToId(yCoord + 1, xCoord - 1);
-            document.getElementById(id).classList.add("highlight");
+            if (document.getElementById(id)) document.getElementById(id).classList.add("highlight");
         } else if (board[yCoord + 1][xCoord - 1] === oppositeColor && board[yCoord + 2][xCoord - 2] === 0) {
             const id1 = arrayCoordinatesToId(yCoord + 2, xCoord - 2);
             document.getElementById(id1).classList.add("highlight");
@@ -183,7 +182,9 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
             document.getElementById(id7).classList.add("highlight");
         }
     }
-    selectedPiece = document.getElementById(arrayCoordinatesToId(yCoord + 1, xCoord - 1));
+}
+function makeMove(boardNumber, target) {
+    if (target.classList.contains("highlight")) console.log(selectedSquare);
 }
 
 //# sourceMappingURL=index.377278e2.js.map

@@ -7,15 +7,15 @@ let scoreBlack = 12;
 let scoreRed = 12;
 let board = [
   [0, 1, 0, 1, 0, 1, 0, 1],
-  [1, 0, 1, 0, 0, 0, 1, 0],
+  [1, 0, 1, 0, 1, 0, 1, 0],
   [0, 1, 0, 1, 0, 1, 0, 1],
-  [-1, 0, 0, 0, 0, 0, -1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [-1, 0, -1, 0, -1, 0, -1, 0],
   [0, -1, 0, -1, 0, -1, 0, -1],
   [-1, 0, -1, 0, -1, 0, -1, 0],
 ];
-let selectedPiece: null | HTMLElement = null;
+let selectedSquare: null | HTMLElement = null;
 
 function updateScore() {
   if (scoreBox) {
@@ -30,18 +30,22 @@ function boardNumberToMatrix(boardNumber: number): number[] {
   const firstArrayIndex = Math.floor(boardNumber / 8);
   const secondArrayIndex = boardNumber % 8;
   return [firstArrayIndex, secondArrayIndex];
-  // return board[firstArrayIndex][secondArrayIndex];
 }
 
 function clickablePiece() {
   return document.querySelectorAll(".checker").forEach((piece: Element) => {
     const pieceWithChecker = piece.closest("td");
+
     if (pieceWithChecker) {
       piece.addEventListener("click", (event) => {
         const boardNumber = parseInt(pieceWithChecker.id);
         if (event.target) {
-          const target = event.target;
-          return checkColorsTurn(boardNumber, target);
+          const target = event.target as HTMLDivElement;
+          const data = [
+            checkColorsTurn(boardNumber, target),
+            makeMove(boardNumber, target),
+          ];
+          return data;
         }
       });
     }
@@ -70,7 +74,7 @@ function setCheckerSquare(indexY: number, indexX: number, color: string): void {
   const idNumber = arrayCoordinatesToId(indexY, indexX);
   const currentCell = document.getElementById(idNumber);
   if (currentCell) {
-    currentCell.innerHTML = `<div class="checker ${color}-checker"></div>`;
+    currentCell.innerHTML = `<div class="piece ${color}-piece"></div>`;
   }
 }
 
@@ -79,11 +83,13 @@ setCheckerBoard();
 function checkColorsTurn(boardNumber: number, target: EventTarget) {
   const boardCoordinates = boardNumberToMatrix(boardNumber);
   if (redTurn && board[boardCoordinates[0]][boardCoordinates[1]] === 1) {
+    selectedSquare = document.getElementById(boardNumber.toString());
     moveChoice(boardCoordinates[0], boardCoordinates[1], target, 1);
   } else if (
     !redTurn &&
     board[boardCoordinates[0]][boardCoordinates[1]] === -1
   ) {
+    selectedSquare = document.getElementById(boardNumber.toString());
     moveChoice(boardCoordinates[0], boardCoordinates[1], target, -1);
   } else {
     return;
@@ -99,23 +105,17 @@ function moveChoice(
   document.querySelectorAll(".highlight").forEach((square) => {
     square.classList.remove("highlight");
   });
-  // console.log(board[xCoord], event);
-  // const downOneLeft = board[yCoord + 1][xCoord - 1];
-  // const downTwoLeft = board[yCoord + 2][xCoord - 1];
-  // const downOneRight = board[yCoord + 1][xCoord + 1];
-  // const downTwoRight = board[yCoord + 2][xCoord + 1];
-
-  // const UpOneLeft = board[yCoord - 1][xCoord - 1];
-  // const upTwoLeft = board[yCoord - 2][xCoord - 1];
-  // const upOneRight = board[yCoord - 1][xCoord + 1];
-  // const upTwoRight = board[yCoord - 2][xCoord + 1];
 
   const oppositeColor = colorNumber * -1;
+
+  console.log(selectedSquare);
 
   if (colorNumber === 1 || target.classList.contains("king")) {
     if (board[yCoord + 1][xCoord - 1] === 0) {
       const id = arrayCoordinatesToId(yCoord + 1, xCoord - 1);
-      document.getElementById(id).classList.add("highlight");
+      if (document.getElementById(id)) {
+        document.getElementById(id).classList.add("highlight");
+      }
     } else if (
       board[yCoord + 1][xCoord - 1] === oppositeColor &&
       board[yCoord + 2][xCoord - 2] === 0
@@ -159,8 +159,10 @@ function moveChoice(
       document.getElementById(id).classList.add("highlight");
     }
   }
+}
 
-  selectedPiece = document.getElementById(
-    arrayCoordinatesToId(yCoord + 1, xCoord - 1)
-  );
+function makeMove(boardNumber: number, target: EventTarget): void {
+  if (target.classList.contains("highlight")) {
+    console.log(selectedSquare);
+  }
 }
