@@ -233,10 +233,10 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
 function makeMove(boardNumber, target) {
   if (target.classList.contains("highlight")) {
     var checkerDivPointer = selectedSquare === null || selectedSquare === void 0 ? void 0 : selectedSquare.innerHTML;
-    console.log(checkerDivPointer);
-    console.log(selectedSquare.innerHTML = "");
-    console.log(boardNumber, checkerDivPointer);
     document.getElementById(boardNumber).innerHTML = checkerDivPointer;
+    document.querySelectorAll(".highlight").forEach(function (square) {
+      square.classList.remove("highlight");
+    });
   }
 }
 },{}],"../../../.asdf/installs/nodejs/18.10.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -264,7 +264,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60155" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63893" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

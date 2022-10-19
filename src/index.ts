@@ -164,13 +164,9 @@ function moveChoice(
 function makeMove(boardNumber: number, target: EventTarget): void {
   if (target.classList.contains("highlight")) {
     const checkerDivPointer = selectedSquare?.innerHTML;
-    console.log(checkerDivPointer);
-    console.log((selectedSquare.innerHTML = ``));
-    console.log(boardNumber, checkerDivPointer);
     document.getElementById(boardNumber).innerHTML = checkerDivPointer;
+    document.querySelectorAll(".highlight").forEach((square) => {
+      square.classList.remove("highlight");
+    });
   }
-
-  document.querySelectorAll(".highlight").forEach((square) => {
-    square.classList.remove("highlight");
-  });
 }
