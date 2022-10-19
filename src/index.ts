@@ -9,7 +9,7 @@ let board = [
   [0, 1, 0, 1, 0, 1, 0, 1],
   [1, 0, 1, 0, 1, 0, 1, 0],
   [0, 1, 0, 1, 0, 1, 0, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, -1, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [-1, 0, -1, 0, -1, 0, -1, 0],
   [0, -1, 0, -1, 0, -1, 0, -1],
@@ -163,6 +163,10 @@ function moveChoice(
 
 function makeMove(boardNumber: number, target: EventTarget): void {
   if (target.classList.contains("highlight")) {
-    console.log(selectedSquare);
+    const checkerDivPointer = selectedSquare?.innerHTML;
+    console.log(checkerDivPointer);
+    console.log((selectedSquare.innerHTML = ``));
+    console.log(boardNumber, checkerDivPointer);
+    document.getElementById(boardNumber).innerHTML = checkerDivPointer;
   }
 }
