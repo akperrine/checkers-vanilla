@@ -169,4 +169,8 @@ function makeMove(boardNumber: number, target: EventTarget): void {
     console.log(boardNumber, checkerDivPointer);
     document.getElementById(boardNumber).innerHTML = checkerDivPointer;
   }
+
+  document.querySelectorAll(".highlight").forEach((square) => {
+    square.classList.remove("highlight");
+  });
 }
