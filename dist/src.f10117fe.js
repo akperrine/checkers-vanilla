@@ -127,7 +127,7 @@ var redTurn = true;
 var scoreBlack = 0;
 var scoreRed = 0;
 var selected = NaN;
-var board = [[0, 1, 0, 1, 0, 1, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1], [0, 0, 0, 0, -1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [-1, 0, -1, 0, -1, 0, -1, 0], [0, -1, 0, -1, 0, -1, 0, -1], [-1, 0, -1, 0, -1, 0, -1, 0]];
+var board = [[0, 1, 0, 1, 0, 0, 0, 1], [1, 0, 1, 0, 0, 0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1], [0, 0, 0, 0, -1, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0], [-1, 0, -1, 0, -1, 0, -1, 0], [0, -1, 0, -1, 0, -1, 0, 0], [-1, 0, -1, 0, -1, 0, -1, 0]];
 var selectedSquare = null;
 function updateScore() {
   if (scoreBox) {
@@ -208,9 +208,10 @@ function clickablePiece() {
           }
           //check if now king
           var selctedCell = document.getElementById(selected.toString());
-          if (checkArrayValue(selected) === 1 && highlightedCoords[0] === 7 || checkArrayValue(selected) === -1 && highlightedCoords[0] === 0 || (selctedCell === null || selctedCell === void 0 ? void 0 : selctedCell.children[0].classList.contains("king"))) {
+          var pieceColorNumber = checkArrayValue(selected);
+          if (pieceColorNumber === 1 && highlightedCoords[0] === 7 || pieceColorNumber === -1 && highlightedCoords[0] === 0 || (selctedCell === null || selctedCell === void 0 ? void 0 : selctedCell.children[0].classList.contains("king"))) {
             console.log("check", highlightedCoords[0] === 7);
-            target.innerHTML = "<div class=\"king\"></div>";
+            target.innerHTML = "<div class=\"piece king ".concat(pieceColorNumber === 1 ? "red" : "black", "-piece\"></div>");
             console.log(target);
           }
           // target?.children[0].classList.add("king");
@@ -338,10 +339,7 @@ function setCheckerSquare(indexY, indexX, color) {
       currentCell.innerHTML = "<div class=\"piece ".concat(color, "-piece\"></div>");
     }
   }
-  // currentCell.innerHTML = ``;
-  // currentCell.innerHTML = `<div class="piece king ${color}-piece"></div>`;
 }
-
 setCheckerBoard();
 function checkColorsTurn(boardNumber, target) {
   var boardCoordinates = boardNumberToMatrix(boardNumber);
@@ -438,7 +436,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51507" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55830" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

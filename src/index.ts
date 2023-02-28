@@ -7,13 +7,13 @@ let scoreBlack = 0;
 let scoreRed = 0;
 let selected = NaN;
 let board = [
-  [0, 1, 0, 1, 0, 1, 0, 1],
-  [1, 0, 1, 0, 1, 0, 1, 0],
+  [0, 1, 0, 1, 0, 0, 0, 1],
+  [1, 0, 1, 0, 0, 0, 1, 0],
   [0, 1, 0, 1, 0, 1, 0, 1],
   [0, 0, 0, 0, -1, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 0, 0, 0, 0, 0, 0],
   [-1, 0, -1, 0, -1, 0, -1, 0],
-  [0, -1, 0, -1, 0, -1, 0, -1],
+  [0, -1, 0, -1, 0, -1, 0, 0],
   [-1, 0, -1, 0, -1, 0, -1, 0],
 ];
 let selectedSquare: null | HTMLElement = null;
@@ -104,14 +104,16 @@ function clickablePiece() {
 
           //check if now king
           const selctedCell = document.getElementById(selected.toString());
-
+          const pieceColorNumber = checkArrayValue(selected);
           if (
-            (checkArrayValue(selected) === 1 && highlightedCoords[0] === 7) ||
-            (checkArrayValue(selected) === -1 && highlightedCoords[0] === 0) ||
+            (pieceColorNumber === 1 && highlightedCoords[0] === 7) ||
+            (pieceColorNumber === -1 && highlightedCoords[0] === 0) ||
             selctedCell?.children[0].classList.contains("king")
           ) {
             console.log("check", highlightedCoords[0] === 7);
-            target.innerHTML = `<div class="king"></div>`;
+            target.innerHTML = `<div class="piece king ${
+              pieceColorNumber === 1 ? "red" : "black"
+            }-piece"></div>`;
             console.log(target);
           }
           // target?.children[0].classList.add("king");
@@ -250,9 +252,6 @@ function setCheckerSquare(indexY: number, indexX: number, color: string): void {
       currentCell.innerHTML = `<div class="piece ${color}-piece"></div>`;
     }
   }
-
-  // currentCell.innerHTML = ``;
-  // currentCell.innerHTML = `<div class="piece king ${color}-piece"></div>`;
 }
 
 setCheckerBoard();
