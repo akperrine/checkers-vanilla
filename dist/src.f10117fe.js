@@ -124,8 +124,9 @@ var table = document.querySelector("#table");
 var scoreBox = document.querySelector(".score-box");
 var gameOver = false;
 var redTurn = true;
-var scoreBlack = 12;
-var scoreRed = 12;
+var scoreBlack = 0;
+var scoreRed = 0;
+var selected = NaN;
 var board = [[0, 1, 0, 1, 0, 1, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1], [0, 0, 0, 0, -1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [-1, 0, -1, 0, -1, 0, -1, 0], [0, -1, 0, -1, 0, -1, 0, -1], [-1, 0, -1, 0, -1, 0, -1, 0]];
 var selectedSquare = null;
 function updateScore() {
@@ -138,28 +139,178 @@ function boardNumberToMatrix(boardNumber) {
   var secondArrayIndex = boardNumber % 8;
   return [firstArrayIndex, secondArrayIndex];
 }
+function checkArrayValue(checkerId) {
+  var coords = boardNumberToMatrix(checkerId);
+  return board[coords[0]][coords[1]];
+}
 function clickablePiece() {
   return document.querySelectorAll(".checker").forEach(function (piece) {
-    var pieceWithChecker = piece.closest("td");
-    if (pieceWithChecker) {
-      piece.addEventListener("click", function (event) {
-        var boardNumber = parseInt(pieceWithChecker.id);
-        if (event.target) {
-          var target = event.target;
-          var data = [checkColorsTurn(boardNumber, target), makeMove(boardNumber, target)];
-          return data;
+    // if (pieceWithChecker) {
+    piece.addEventListener("click", function (event) {
+      if (event.target) {
+        var target = event.target;
+        var pieceWithChecker = piece.hasChildNodes();
+        // check if square clicked is highlighted
+        if (event.target.classList.contains("highlight")) {
+          var boardNumber = parseInt(piece.id);
+          var highlightedCoords = boardNumberToMatrix(boardNumber);
+          var selectedCoords = boardNumberToMatrix(selected);
+          var rowDifference = highlightedCoords[0] - selectedCoords[0];
+          // const checkLeftorRight = highlightedCoords[1] - selectedCoords[0];
+          // remove skipped piece
+          // check if pieced skipped down
+          if (rowDifference === 2) {
+            // check if piece moved down and RIGHT
+            if (highlightedCoords[1] > selectedCoords[1]) {
+              var skippedPieceId = (selected + 9).toString();
+              var skippedPieceMatrix = boardNumberToMatrix(selected + 9);
+              var skippedSquare = document.getElementById(skippedPieceId);
+              if (skippedSquare) {
+                board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
+                skippedSquare.innerHTML = "";
+              }
+            }
+            // check if piece moved down and LEFT
+            if (highlightedCoords[1] < selectedCoords[1]) {
+              var _skippedPieceId = (selected + 7).toString();
+              var _skippedPieceMatrix = boardNumberToMatrix(selected + 7);
+              var _skippedSquare = document.getElementById(_skippedPieceId);
+              if (_skippedSquare) {
+                board[_skippedPieceMatrix[0]][_skippedPieceMatrix[1]] = 0;
+                _skippedSquare.innerHTML = "";
+              }
+            }
+          }
+          // check if piece moved up
+          if (rowDifference === -2) {
+            // check if piece moved up and RIGHT
+            console.log(highlightedCoords[1] > selectedCoords[1]);
+            if (highlightedCoords[1] > selectedCoords[1]) {
+              var _skippedPieceId2 = (selected - 7).toString();
+              var _skippedPieceMatrix2 = boardNumberToMatrix(selected - 7);
+              var _skippedSquare2 = document.getElementById(_skippedPieceId2);
+              if (_skippedSquare2) {
+                board[_skippedPieceMatrix2[0]][_skippedPieceMatrix2[1]] = 0;
+                _skippedSquare2.innerHTML = "";
+              }
+            }
+            // check if piece moved up and LEFT
+            if (highlightedCoords[1] < selectedCoords[1]) {
+              var _skippedPieceId3 = (selected - 9).toString();
+              var _skippedPieceMatrix3 = boardNumberToMatrix(selected - 9);
+              var _skippedSquare3 = document.getElementById(_skippedPieceId3);
+              if (_skippedSquare3) {
+                console.log(_skippedSquare3);
+                board[_skippedPieceMatrix3[0]][_skippedPieceMatrix3[1]] = 0;
+                _skippedSquare3.innerHTML = "";
+              }
+            }
+          }
+          //check if now king
+          var selctedCell = document.getElementById(selected.toString());
+          if (checkArrayValue(selected) === 1 && highlightedCoords[0] === 7 && !(selctedCell === null || selctedCell === void 0 ? void 0 : selctedCell.classList.contains("king"))) console.log("check", checkArrayValue(selected), highlightedCoords[0] === 7);
+          // update board array to proper values
+          board[highlightedCoords[0]][highlightedCoords[1]] = checkArrayValue(selected);
+          board[selectedCoords[0]][selectedCoords[1]] = 0;
+          // update selected cell to be empty
+          console.log(selected.toString());
+          if (selctedCell) {
+            console.log(selctedCell);
+            selctedCell.innerHTML = "";
+          }
+          //check if still a move left
+          // selected = boardNumber;
+          // console.log(boardNumber);
+          // selectedCoords = boardNumberToMatrix(selected);
+          // let yCoord = selectedCoords[0];
+          // let xCoord = selectedCoords[1];
+          // let oppositeColor = checkArrayValue(selected) * -1;
+          // if (
+          //   board[yCoord + 1][xCoord - 1] === oppositeColor &&
+          //   board[yCoord + 2][xCoord - 2] === 0
+          // ) {
+          //   const squareId = (yCoord + 2 + 1) * 8 + (xCoord - 2);
+          //   console.log(squareId);
+          //   const nextMoveSquare = document.getElementById(squareId.toString());
+          //   nextMoveSquare?.classList.add("highlight");
+          //   console.log(nextMoveSquare);
+          //   // nextMoveSquare?.classList.add("highlight");
+          // }
+          // if (
+          //   board[yCoord + 1][xCoord + 1] === oppositeColor &&
+          //   board[yCoord + 2][xCoord + 2] === 0
+          // ) {
+          //   const squareId = (yCoord + 2 + 1) * 8 + (xCoord + 2);
+          //   const nextMoveSquare = document.getElementById(squareId.toString());
+          //   nextMoveSquare?.classList.add("highlight");
+          //   console.log(nextMoveSquare);
+          // }
+          // if (
+          //   board[yCoord - 1][xCoord - 1] === oppositeColor &&
+          //   board[yCoord - 2][xCoord - 2] === 0
+          // ) {
+          //   const squareId = (yCoord - 2 + 1) * 8 + (xCoord - 2);
+          //   const nextMoveSquare = document.getElementById(squareId.toString());
+          //   nextMoveSquare?.classList.add("highlight");
+          //   console.log(nextMoveSquare);
+          // }
+          // if (
+          //   board[yCoord - 1][xCoord + 1] === oppositeColor &&
+          //   board[yCoord - 2][xCoord + 2] === 0
+          // ) {
+          //   const squareId = (yCoord - 2 + 1) * 8 + (xCoord + 2);
+          //   const nextMoveSquare = document.getElementById(squareId.toString());
+          //   console.log(nextMoveSquare);
+          //   nextMoveSquare?.classList.add("highlight");
+          //   console.log(nextMoveSquare);
+          // }
+          ///////
+          selected = NaN;
+          scoreBlack = 0;
+          scoreRed = 0;
+          redTurn = !redTurn;
+          document.querySelectorAll(".highlight").forEach(function (square) {
+            square.classList.remove("highlight");
+          });
+          setCheckerBoard();
+        } else if (pieceWithChecker) {
+          var _boardNumber = parseInt(piece.id);
+          var checkerValue = checkArrayValue(_boardNumber);
+          var xCoord = boardNumberToMatrix(_boardNumber)[0];
+          var yCoord = boardNumberToMatrix(_boardNumber)[1];
+          if (redTurn && checkerValue === 1) {
+            selected = _boardNumber;
+            moveChoice(xCoord, yCoord, target, checkerValue);
+          }
+          if (!redTurn && checkerValue === -1) {
+            selected = _boardNumber;
+            console.log("passed in black", xCoord, yCoord, target, checkerValue);
+            moveChoice(xCoord, yCoord, target, checkerValue);
+          }
         }
-      });
-    }
+      }
+      // if (event.target) {
+      // const target = event.target as HTMLDivElement;
+      //   const data = [
+      //     checkColorsTurn(boardNumber, target),
+      //     makeMove(boardNumber, target),
+      //   ];
+      //   return data;
+      // }
+    });
+    // }
   });
 }
+
 function setCheckerBoard() {
   for (var i = 0; i < 8; i++) {
     for (var j = 0; j < 8; j++) {
       if (board[i][j] === 1) {
         setCheckerSquare(i, j, "red");
+        scoreRed++;
       } else if (board[i][j] === -1) {
         setCheckerSquare(i, j, "black");
+        scoreBlack++;
       }
     }
   }
@@ -173,6 +324,7 @@ function setCheckerSquare(indexY, indexX, color) {
   var idNumber = arrayCoordinatesToId(indexY, indexX);
   var currentCell = document.getElementById(idNumber);
   if (currentCell) {
+    currentCell.innerHTML = "";
     currentCell.innerHTML = "<div class=\"piece ".concat(color, "-piece\"></div>");
   }
 }
@@ -194,43 +346,52 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
     square.classList.remove("highlight");
   });
   var oppositeColor = colorNumber * -1;
-  console.log(selectedSquare);
+  console.log("fire", colorNumber === 1, target.classList.contains("king"));
   if (colorNumber === 1 || target.classList.contains("king")) {
-    if (board[yCoord + 1][xCoord - 1] === 0) {
-      var id = arrayCoordinatesToId(yCoord + 1, xCoord - 1);
-      if (document.getElementById(id)) {
-        document.getElementById(id).classList.add("highlight");
+    if (board[yCoord + 1]) {
+      if (board[yCoord + 1][xCoord - 1] === 0) {
+        var id = arrayCoordinatesToId(yCoord + 1, xCoord - 1);
+        if (document.getElementById(id)) {
+          document.getElementById(id).classList.add("highlight");
+        }
+      } else if (board[yCoord + 1][xCoord - 1] === oppositeColor && board[yCoord + 2][xCoord - 2] === 0) {
+        var _id = arrayCoordinatesToId(yCoord + 2, xCoord - 2);
+        document.getElementById(_id).classList.add("highlight");
       }
-    } else if (board[yCoord + 1][xCoord - 1] === oppositeColor && board[yCoord + 2][xCoord - 2] === 0) {
-      var _id = arrayCoordinatesToId(yCoord + 2, xCoord - 2);
-      document.getElementById(_id).classList.add("highlight");
-    }
-    if (board[yCoord + 1][xCoord + 1] === 0) {
-      var _id2 = arrayCoordinatesToId(yCoord + 1, xCoord + 1);
-      document.getElementById(_id2).classList.add("highlight");
-    } else if (board[yCoord + 1][xCoord + 1] === oppositeColor && board[yCoord + 2][xCoord + 2] === 0) {
-      var _id3 = arrayCoordinatesToId(yCoord + 2, xCoord + 2);
-      document.getElementById(_id3).classList.add("highlight");
+      if (board[yCoord + 1][xCoord + 1] === 0) {
+        var _id2 = arrayCoordinatesToId(yCoord + 1, xCoord + 1);
+        document.getElementById(_id2).classList.add("highlight");
+      } else if (board[yCoord + 1][xCoord + 1] === oppositeColor && board[yCoord + 2][xCoord + 2] === 0) {
+        var _id3 = arrayCoordinatesToId(yCoord + 2, xCoord + 2);
+        document.getElementById(_id3).classList.add("highlight");
+      }
     }
   }
   if (colorNumber === -1 || target.classList.contains("king")) {
-    if (board[yCoord - 1][xCoord - 1] === 0) {
-      var _id4 = arrayCoordinatesToId(yCoord - 1, xCoord - 1);
-      document.getElementById(_id4).classList.add("highlight");
-    } else if (board[yCoord - 1][xCoord - 1] === oppositeColor && board[yCoord - 2][xCoord - 2] === 0) {
-      var _id5 = arrayCoordinatesToId(yCoord - 2, xCoord - 2);
-      document.getElementById(_id5).classList.add("highlight");
-    }
-    if (board[yCoord - 1][xCoord + 1] === 0) {
-      var _id6 = arrayCoordinatesToId(yCoord - 1, xCoord + 1);
-      document.getElementById(_id6).classList.add("highlight");
-    } else if (board[yCoord - 1][xCoord + 1] === oppositeColor && board[yCoord - 2][xCoord + 2] === 0) {
-      var _id7 = arrayCoordinatesToId(yCoord - 2, xCoord + 2);
-      document.getElementById(_id7).classList.add("highlight");
+    console.log("fire");
+    if (board[yCoord - 1]) {
+      if (board[yCoord - 1][xCoord - 1] === 0) {
+        console.log("false");
+        var _id4 = arrayCoordinatesToId(yCoord - 1, xCoord - 1);
+        document.getElementById(_id4).classList.add("highlight");
+      } else if (board[yCoord - 1][xCoord - 1] === oppositeColor && board[yCoord - 2][xCoord - 2] === 0) {
+        var _id5 = arrayCoordinatesToId(yCoord - 2, xCoord - 2);
+        document.getElementById(_id5).classList.add("highlight");
+      }
+      if (board[yCoord - 1][xCoord + 1] === 0) {
+        var _id6 = arrayCoordinatesToId(yCoord - 1, xCoord + 1);
+        document.getElementById(_id6).classList.add("highlight");
+      } else if (board[yCoord - 1][xCoord + 1] === oppositeColor && board[yCoord - 2][xCoord + 2] === 0) {
+        var _id7 = arrayCoordinatesToId(yCoord - 2, xCoord + 2);
+        document.getElementById(_id7).classList.add("highlight");
+      }
     }
   }
 }
 function makeMove(boardNumber, target) {
+  console.log(boardNumber);
+  var boardCoords = boardNumberToMatrix(boardNumber);
+  var boardPiece = board[boardCoords[0]][boardCoords[1]];
   if (target.classList.contains("highlight")) {
     var checkerDivPointer = selectedSquare === null || selectedSquare === void 0 ? void 0 : selectedSquare.innerHTML;
     document.getElementById(boardNumber).innerHTML = checkerDivPointer;
@@ -239,7 +400,7 @@ function makeMove(boardNumber, target) {
     });
   }
 }
-},{}],"../../../.asdf/installs/nodejs/18.10.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{}],"../../.asdf/installs/nodejs/18.10.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -264,7 +425,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63893" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64500" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -408,5 +569,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../.asdf/installs/nodejs/18.10.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
+},{}]},{},["../../.asdf/installs/nodejs/18.10.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
 //# sourceMappingURL=/src.f10117fe.js.map
