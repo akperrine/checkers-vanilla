@@ -106,15 +106,15 @@ function clickablePiece() {
           const selctedCell = document.getElementById(selected.toString());
 
           if (
-            checkArrayValue(selected) === 1 &&
-            highlightedCoords[0] === 7 &&
-            !selctedCell?.classList.contains("king")
-          )
-            console.log(
-              "check",
-              checkArrayValue(selected),
-              highlightedCoords[0] === 7
-            );
+            (checkArrayValue(selected) === 1 && highlightedCoords[0] === 7) ||
+            (checkArrayValue(selected) === -1 && highlightedCoords[0] === 0) ||
+            selctedCell?.children[0].classList.contains("king")
+          ) {
+            console.log("check", highlightedCoords[0] === 7);
+            target.innerHTML = `<div class="king"></div>`;
+            console.log(target);
+          }
+          // target?.children[0].classList.add("king");
 
           // update board array to proper values
           board[highlightedCoords[0]][highlightedCoords[1]] =
@@ -198,13 +198,6 @@ function clickablePiece() {
           }
           if (!redTurn && checkerValue === -1) {
             selected = boardNumber;
-            console.log(
-              "passed in black",
-              xCoord,
-              yCoord,
-              target,
-              checkerValue
-            );
             moveChoice(xCoord, yCoord, target, checkerValue);
           }
         }
@@ -247,9 +240,19 @@ function setCheckerSquare(indexY: number, indexX: number, color: string): void {
   const idNumber = arrayCoordinatesToId(indexY, indexX);
   const currentCell = document.getElementById(idNumber);
   if (currentCell) {
-    currentCell.innerHTML = ``;
-    currentCell.innerHTML = `<div class="piece ${color}-piece"></div>`;
+    if (currentCell.children[0]) {
+      if (currentCell.children[0].classList.contains("king")) {
+        currentCell.innerHTML = ``;
+        currentCell.innerHTML = `<div class="piece king ${color}-piece"></div>`;
+      }
+    } else {
+      currentCell.innerHTML = ``;
+      currentCell.innerHTML = `<div class="piece ${color}-piece"></div>`;
+    }
   }
+
+  // currentCell.innerHTML = ``;
+  // currentCell.innerHTML = `<div class="piece king ${color}-piece"></div>`;
 }
 
 setCheckerBoard();
@@ -281,7 +284,6 @@ function moveChoice(
   });
 
   const oppositeColor = colorNumber * -1;
-  console.log("fire", colorNumber === 1, target.classList.contains("king"));
   if (colorNumber === 1 || target.classList.contains("king")) {
     if (board[yCoord + 1]) {
       if (board[yCoord + 1][xCoord - 1] === 0) {
@@ -290,6 +292,7 @@ function moveChoice(
           document.getElementById(id).classList.add("highlight");
         }
       } else if (
+        board[yCoord + 2] &&
         board[yCoord + 1][xCoord - 1] === oppositeColor &&
         board[yCoord + 2][xCoord - 2] === 0
       ) {
@@ -300,6 +303,7 @@ function moveChoice(
         const id = arrayCoordinatesToId(yCoord + 1, xCoord + 1);
         document.getElementById(id).classList.add("highlight");
       } else if (
+        board[yCoord + 2] &&
         board[yCoord + 1][xCoord + 1] === oppositeColor &&
         board[yCoord + 2][xCoord + 2] === 0
       ) {
@@ -316,6 +320,7 @@ function moveChoice(
         const id = arrayCoordinatesToId(yCoord - 1, xCoord - 1);
         document.getElementById(id).classList.add("highlight");
       } else if (
+        board[yCoord - 2] &&
         board[yCoord - 1][xCoord - 1] === oppositeColor &&
         board[yCoord - 2][xCoord - 2] === 0
       ) {
@@ -327,6 +332,7 @@ function moveChoice(
         const id = arrayCoordinatesToId(yCoord - 1, xCoord + 1);
         document.getElementById(id).classList.add("highlight");
       } else if (
+        board[yCoord - 2] &&
         board[yCoord - 1][xCoord + 1] === oppositeColor &&
         board[yCoord - 2][xCoord + 2] === 0
       ) {

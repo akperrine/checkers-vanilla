@@ -208,7 +208,12 @@ function clickablePiece() {
           }
           //check if now king
           var selctedCell = document.getElementById(selected.toString());
-          if (checkArrayValue(selected) === 1 && highlightedCoords[0] === 7 && !(selctedCell === null || selctedCell === void 0 ? void 0 : selctedCell.classList.contains("king"))) console.log("check", checkArrayValue(selected), highlightedCoords[0] === 7);
+          if (checkArrayValue(selected) === 1 && highlightedCoords[0] === 7 || checkArrayValue(selected) === -1 && highlightedCoords[0] === 0 || (selctedCell === null || selctedCell === void 0 ? void 0 : selctedCell.children[0].classList.contains("king"))) {
+            console.log("check", highlightedCoords[0] === 7);
+            target.innerHTML = "<div class=\"king\"></div>";
+            console.log(target);
+          }
+          // target?.children[0].classList.add("king");
           // update board array to proper values
           board[highlightedCoords[0]][highlightedCoords[1]] = checkArrayValue(selected);
           board[selectedCoords[0]][selectedCoords[1]] = 0;
@@ -284,7 +289,6 @@ function clickablePiece() {
           }
           if (!redTurn && checkerValue === -1) {
             selected = _boardNumber;
-            console.log("passed in black", xCoord, yCoord, target, checkerValue);
             moveChoice(xCoord, yCoord, target, checkerValue);
           }
         }
@@ -324,10 +328,20 @@ function setCheckerSquare(indexY, indexX, color) {
   var idNumber = arrayCoordinatesToId(indexY, indexX);
   var currentCell = document.getElementById(idNumber);
   if (currentCell) {
-    currentCell.innerHTML = "";
-    currentCell.innerHTML = "<div class=\"piece ".concat(color, "-piece\"></div>");
+    if (currentCell.children[0]) {
+      if (currentCell.children[0].classList.contains("king")) {
+        currentCell.innerHTML = "";
+        currentCell.innerHTML = "<div class=\"piece king ".concat(color, "-piece\"></div>");
+      }
+    } else {
+      currentCell.innerHTML = "";
+      currentCell.innerHTML = "<div class=\"piece ".concat(color, "-piece\"></div>");
+    }
   }
+  // currentCell.innerHTML = ``;
+  // currentCell.innerHTML = `<div class="piece king ${color}-piece"></div>`;
 }
+
 setCheckerBoard();
 function checkColorsTurn(boardNumber, target) {
   var boardCoordinates = boardNumberToMatrix(boardNumber);
@@ -346,7 +360,6 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
     square.classList.remove("highlight");
   });
   var oppositeColor = colorNumber * -1;
-  console.log("fire", colorNumber === 1, target.classList.contains("king"));
   if (colorNumber === 1 || target.classList.contains("king")) {
     if (board[yCoord + 1]) {
       if (board[yCoord + 1][xCoord - 1] === 0) {
@@ -354,14 +367,14 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
         if (document.getElementById(id)) {
           document.getElementById(id).classList.add("highlight");
         }
-      } else if (board[yCoord + 1][xCoord - 1] === oppositeColor && board[yCoord + 2][xCoord - 2] === 0) {
+      } else if (board[yCoord + 2] && board[yCoord + 1][xCoord - 1] === oppositeColor && board[yCoord + 2][xCoord - 2] === 0) {
         var _id = arrayCoordinatesToId(yCoord + 2, xCoord - 2);
         document.getElementById(_id).classList.add("highlight");
       }
       if (board[yCoord + 1][xCoord + 1] === 0) {
         var _id2 = arrayCoordinatesToId(yCoord + 1, xCoord + 1);
         document.getElementById(_id2).classList.add("highlight");
-      } else if (board[yCoord + 1][xCoord + 1] === oppositeColor && board[yCoord + 2][xCoord + 2] === 0) {
+      } else if (board[yCoord + 2] && board[yCoord + 1][xCoord + 1] === oppositeColor && board[yCoord + 2][xCoord + 2] === 0) {
         var _id3 = arrayCoordinatesToId(yCoord + 2, xCoord + 2);
         document.getElementById(_id3).classList.add("highlight");
       }
@@ -374,14 +387,14 @@ function moveChoice(yCoord, xCoord, target, colorNumber) {
         console.log("false");
         var _id4 = arrayCoordinatesToId(yCoord - 1, xCoord - 1);
         document.getElementById(_id4).classList.add("highlight");
-      } else if (board[yCoord - 1][xCoord - 1] === oppositeColor && board[yCoord - 2][xCoord - 2] === 0) {
+      } else if (board[yCoord - 2] && board[yCoord - 1][xCoord - 1] === oppositeColor && board[yCoord - 2][xCoord - 2] === 0) {
         var _id5 = arrayCoordinatesToId(yCoord - 2, xCoord - 2);
         document.getElementById(_id5).classList.add("highlight");
       }
       if (board[yCoord - 1][xCoord + 1] === 0) {
         var _id6 = arrayCoordinatesToId(yCoord - 1, xCoord + 1);
         document.getElementById(_id6).classList.add("highlight");
-      } else if (board[yCoord - 1][xCoord + 1] === oppositeColor && board[yCoord - 2][xCoord + 2] === 0) {
+      } else if (board[yCoord - 2] && board[yCoord - 1][xCoord + 1] === oppositeColor && board[yCoord - 2][xCoord + 2] === 0) {
         var _id7 = arrayCoordinatesToId(yCoord - 2, xCoord + 2);
         document.getElementById(_id7).classList.add("highlight");
       }
@@ -425,7 +438,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64500" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51507" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
