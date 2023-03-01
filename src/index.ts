@@ -16,6 +16,9 @@ let board = [
   [0, -1, 0, -1, 0, -1, 0, 0],
   [-1, 0, -1, 0, -1, 0, -1, 0],
 ];
+
+// only works because checkers never goes to zero box
+let mustMove: boolean | number = false;
 let selectedSquare: null | HTMLElement = null;
 
 function updateScore() {
@@ -46,162 +49,196 @@ function clickablePiece() {
         const target = event.target as HTMLDivElement;
         const pieceWithChecker = piece.hasChildNodes();
         // check if square clicked is highlighted
-        if (event.target.classList.contains("highlight")) {
-          const boardNumber = parseInt(piece.id);
-          const highlightedCoords = boardNumberToMatrix(boardNumber);
-          let selectedCoords = boardNumberToMatrix(selected);
-          const rowDifference = highlightedCoords[0] - selectedCoords[0];
-          // const checkLeftorRight = highlightedCoords[1] - selectedCoords[0];
-          // remove skipped piece
-          // check if pieced skipped down
-          if (rowDifference === 2) {
-            // check if piece moved down and RIGHT
-            if (highlightedCoords[1] > selectedCoords[1]) {
-              const skippedPieceId = (selected + 9).toString();
-              const skippedPieceMatrix = boardNumberToMatrix(selected + 9);
-              const skippedSquare = document.getElementById(skippedPieceId);
-              if (skippedSquare) {
-                board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
-                skippedSquare.innerHTML = ``;
+        if (!mustMove) {
+          if (event.target.classList.contains("highlight")) {
+            const boardNumber = parseInt(piece.id);
+            const highlightedCoords = boardNumberToMatrix(boardNumber);
+            let selectedCoords = boardNumberToMatrix(selected);
+            const rowDifference = highlightedCoords[0] - selectedCoords[0];
+            // const checkLeftorRight = highlightedCoords[1] - selectedCoords[0];
+            // remove skipped piece
+            // check if pieced skipped down
+            if (rowDifference === 2) {
+              // check if piece moved down and RIGHT
+              if (highlightedCoords[1] > selectedCoords[1]) {
+                const skippedPieceId = (selected + 9).toString();
+                const skippedPieceMatrix = boardNumberToMatrix(selected + 9);
+                const skippedSquare = document.getElementById(skippedPieceId);
+                if (skippedSquare) {
+                  board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
+                  skippedSquare.innerHTML = ``;
+                }
+              }
+              // check if piece moved down and LEFT
+              if (highlightedCoords[1] < selectedCoords[1]) {
+                const skippedPieceId = (selected + 7).toString();
+                const skippedPieceMatrix = boardNumberToMatrix(selected + 7);
+                const skippedSquare = document.getElementById(skippedPieceId);
+                if (skippedSquare) {
+                  board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
+                  skippedSquare.innerHTML = ``;
+                }
               }
             }
-            // check if piece moved down and LEFT
-            if (highlightedCoords[1] < selectedCoords[1]) {
-              const skippedPieceId = (selected + 7).toString();
-              const skippedPieceMatrix = boardNumberToMatrix(selected + 7);
-              const skippedSquare = document.getElementById(skippedPieceId);
-              if (skippedSquare) {
-                board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
-                skippedSquare.innerHTML = ``;
+            // check if piece moved up
+            if (rowDifference === -2) {
+              // check if piece moved up and RIGHT
+              if (highlightedCoords[1] > selectedCoords[1]) {
+                const skippedPieceId = (selected - 7).toString();
+                const skippedPieceMatrix = boardNumberToMatrix(selected - 7);
+                const skippedSquare = document.getElementById(skippedPieceId);
+                if (skippedSquare) {
+                  board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
+                  skippedSquare.innerHTML = ``;
+                }
+              }
+              // check if piece moved up and LEFT
+              if (highlightedCoords[1] < selectedCoords[1]) {
+                const skippedPieceId = (selected - 9).toString();
+                const skippedPieceMatrix = boardNumberToMatrix(selected - 9);
+                const skippedSquare = document.getElementById(skippedPieceId);
+                if (skippedSquare) {
+                  console.log(skippedSquare);
+                  board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
+                  skippedSquare.innerHTML = ``;
+                }
               }
             }
-          }
-          // check if piece moved up
-          if (rowDifference === -2) {
-            // check if piece moved up and RIGHT
-            console.log(highlightedCoords[1] > selectedCoords[1]);
-            if (highlightedCoords[1] > selectedCoords[1]) {
-              const skippedPieceId = (selected - 7).toString();
-              const skippedPieceMatrix = boardNumberToMatrix(selected - 7);
-              const skippedSquare = document.getElementById(skippedPieceId);
-              if (skippedSquare) {
-                board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
-                skippedSquare.innerHTML = ``;
-              }
+
+            //check if now king
+            const selctedCell = document.getElementById(selected.toString());
+            const pieceColorNumber = checkArrayValue(selected);
+            if (
+              (pieceColorNumber === 1 && highlightedCoords[0] === 7) ||
+              (pieceColorNumber === -1 && highlightedCoords[0] === 0) ||
+              selctedCell?.children[0].classList.contains("king")
+            ) {
+              console.log("check", highlightedCoords[0] === 7);
+              target.innerHTML = `<div class="piece king ${
+                pieceColorNumber === 1 ? "red" : "black"
+              }-piece"></div>`;
+              console.log(target);
             }
-            // check if piece moved up and LEFT
-            if (highlightedCoords[1] < selectedCoords[1]) {
-              const skippedPieceId = (selected - 9).toString();
-              const skippedPieceMatrix = boardNumberToMatrix(selected - 9);
-              const skippedSquare = document.getElementById(skippedPieceId);
-              if (skippedSquare) {
-                console.log(skippedSquare);
-                board[skippedPieceMatrix[0]][skippedPieceMatrix[1]] = 0;
-                skippedSquare.innerHTML = ``;
-              }
+            // target?.children[0].classList.add("king");
+
+            // update board array to proper values
+            board[highlightedCoords[0]][highlightedCoords[1]] =
+              checkArrayValue(selected);
+            board[selectedCoords[0]][selectedCoords[1]] = 0;
+
+            // update selected cell to be empty
+            console.log(selected.toString());
+            if (selctedCell) {
+              console.log(selctedCell);
+              selctedCell.innerHTML = ``;
+            }
+
+            //check if still a move left
+            document.querySelectorAll(".highlight").forEach((square) => {
+              square.classList.remove("highlight");
+            });
+
+            const checkerValue = checkArrayValue(boardNumber);
+            if (rowDifference === 2 || rowDifference === -2) {
+              checkContinuedMove(
+                highlightedCoords[0],
+                highlightedCoords[1],
+                target,
+                checkerValue
+              );
+            }
+
+            // selected = boardNumber;
+            // const movedSelectorPiece = document.getElementById(
+            //   selected.toString()
+            // );
+            // console.log(movedSelectorPiece);
+            // // scoreBlack = 0;
+            // // scoreRed = 0;
+            // console.log("before reset");
+            // setCheckerBoard();
+            // movedSelectorPiece?.click();
+            // console.log("after reset");
+
+            // const checkerValue = checkArrayValue(selected);
+            // const xCoord = boardNumberToMatrix(boardNumber)[0];
+            // const yCoord = boardNumberToMatrix(boardNumber)[1];
+            // console.log("still turn", target, checkerValue, xCoord, yCoord);
+            // moveChoice(yCoord, xCoord, target, checkerValue);
+
+            // stillTurn = false;
+            // selected = boardNumber;
+            // console.log(boardNumber);
+            // selectedCoords = boardNumberToMatrix(selected);
+            // let yCoord = selectedCoords[0];
+            // let xCoord = selectedCoords[1];
+            // let oppositeColor = checkArrayValue(selected) * -1;
+            // if (
+            //   board[yCoord + 1][xCoord - 1] === oppositeColor &&
+            //   board[yCoord + 2][xCoord - 2] === 0
+            // ) {
+            //   const squareId = (yCoord + 2 + 1) * 8 + (xCoord - 2);
+            //   console.log(squareId);
+            //   const nextMoveSquare = document.getElementById(squareId.toString());
+            //   nextMoveSquare?.classList.add("highlight");
+            //   console.log(nextMoveSquare);
+            //   // nextMoveSquare?.classList.add("highlight");
+            // }
+            // if (
+            //   board[yCoord + 1][xCoord + 1] === oppositeColor &&
+            //   board[yCoord + 2][xCoord + 2] === 0
+            // ) {
+            //   const squareId = (yCoord + 2 + 1) * 8 + (xCoord + 2);
+            //   const nextMoveSquare = document.getElementById(squareId.toString());
+
+            //   nextMoveSquare?.classList.add("highlight");
+            //   console.log(nextMoveSquare);
+            // }
+            // if (
+            //   board[yCoord - 1][xCoord - 1] === oppositeColor &&
+            //   board[yCoord - 2][xCoord - 2] === 0
+            // ) {
+            //   const squareId = (yCoord - 2 + 1) * 8 + (xCoord - 2);
+            //   const nextMoveSquare = document.getElementById(squareId.toString());
+            //   nextMoveSquare?.classList.add("highlight");
+
+            //   console.log(nextMoveSquare);
+            // }
+            // if (
+            //   board[yCoord - 1][xCoord + 1] === oppositeColor &&
+            //   board[yCoord - 2][xCoord + 2] === 0
+            // ) {
+            //   const squareId = (yCoord - 2 + 1) * 8 + (xCoord + 2);
+            //   const nextMoveSquare = document.getElementById(squareId.toString());
+            //   console.log(nextMoveSquare);
+            //   nextMoveSquare?.classList.add("highlight");
+            //   console.log(nextMoveSquare);
+            // }
+            ///////
+
+            selected = NaN;
+            scoreBlack = 0;
+            scoreRed = 0;
+            redTurn = !redTurn;
+
+            setCheckerBoard();
+          } else if (pieceWithChecker) {
+            const boardNumber = parseInt(piece.id);
+            const checkerValue = checkArrayValue(boardNumber);
+            const xCoord = boardNumberToMatrix(boardNumber)[0];
+            const yCoord = boardNumberToMatrix(boardNumber)[1];
+            if (redTurn && checkerValue === 1) {
+              selected = boardNumber;
+
+              moveChoice(xCoord, yCoord, target, checkerValue);
+            }
+            if (!redTurn && checkerValue === -1) {
+              selected = boardNumber;
+              moveChoice(xCoord, yCoord, target, checkerValue);
             }
           }
-
-          //check if now king
-          const selctedCell = document.getElementById(selected.toString());
-          const pieceColorNumber = checkArrayValue(selected);
-          if (
-            (pieceColorNumber === 1 && highlightedCoords[0] === 7) ||
-            (pieceColorNumber === -1 && highlightedCoords[0] === 0) ||
-            selctedCell?.children[0].classList.contains("king")
-          ) {
-            console.log("check", highlightedCoords[0] === 7);
-            target.innerHTML = `<div class="piece king ${
-              pieceColorNumber === 1 ? "red" : "black"
-            }-piece"></div>`;
-            console.log(target);
-          }
-          // target?.children[0].classList.add("king");
-
-          // update board array to proper values
-          board[highlightedCoords[0]][highlightedCoords[1]] =
-            checkArrayValue(selected);
-          board[selectedCoords[0]][selectedCoords[1]] = 0;
-
-          // update selected cell to be empty
-          console.log(selected.toString());
-          if (selctedCell) {
-            console.log(selctedCell);
-            selctedCell.innerHTML = ``;
-          }
-
-          //check if still a move left
-          // selected = boardNumber;
-          // console.log(boardNumber);
-          // selectedCoords = boardNumberToMatrix(selected);
-          // let yCoord = selectedCoords[0];
-          // let xCoord = selectedCoords[1];
-          // let oppositeColor = checkArrayValue(selected) * -1;
-          // if (
-          //   board[yCoord + 1][xCoord - 1] === oppositeColor &&
-          //   board[yCoord + 2][xCoord - 2] === 0
-          // ) {
-          //   const squareId = (yCoord + 2 + 1) * 8 + (xCoord - 2);
-          //   console.log(squareId);
-          //   const nextMoveSquare = document.getElementById(squareId.toString());
-          //   nextMoveSquare?.classList.add("highlight");
-          //   console.log(nextMoveSquare);
-          //   // nextMoveSquare?.classList.add("highlight");
-          // }
-          // if (
-          //   board[yCoord + 1][xCoord + 1] === oppositeColor &&
-          //   board[yCoord + 2][xCoord + 2] === 0
-          // ) {
-          //   const squareId = (yCoord + 2 + 1) * 8 + (xCoord + 2);
-          //   const nextMoveSquare = document.getElementById(squareId.toString());
-
-          //   nextMoveSquare?.classList.add("highlight");
-          //   console.log(nextMoveSquare);
-          // }
-          // if (
-          //   board[yCoord - 1][xCoord - 1] === oppositeColor &&
-          //   board[yCoord - 2][xCoord - 2] === 0
-          // ) {
-          //   const squareId = (yCoord - 2 + 1) * 8 + (xCoord - 2);
-          //   const nextMoveSquare = document.getElementById(squareId.toString());
-          //   nextMoveSquare?.classList.add("highlight");
-
-          //   console.log(nextMoveSquare);
-          // }
-          // if (
-          //   board[yCoord - 1][xCoord + 1] === oppositeColor &&
-          //   board[yCoord - 2][xCoord + 2] === 0
-          // ) {
-          //   const squareId = (yCoord - 2 + 1) * 8 + (xCoord + 2);
-          //   const nextMoveSquare = document.getElementById(squareId.toString());
-          //   console.log(nextMoveSquare);
-          //   nextMoveSquare?.classList.add("highlight");
-          //   console.log(nextMoveSquare);
-          // }
-          ///////
-
-          selected = NaN;
-          scoreBlack = 0;
-          scoreRed = 0;
-          redTurn = !redTurn;
-          document.querySelectorAll(".highlight").forEach((square) => {
-            square.classList.remove("highlight");
-          });
-          setCheckerBoard();
-        } else if (pieceWithChecker) {
-          const boardNumber = parseInt(piece.id);
-          const checkerValue = checkArrayValue(boardNumber);
-          const xCoord = boardNumberToMatrix(boardNumber)[0];
-          const yCoord = boardNumberToMatrix(boardNumber)[1];
-          if (redTurn && checkerValue === 1) {
-            selected = boardNumber;
-
-            moveChoice(xCoord, yCoord, target, checkerValue);
-          }
-          if (!redTurn && checkerValue === -1) {
-            selected = boardNumber;
-            moveChoice(xCoord, yCoord, target, checkerValue);
-          }
+        } else {
+          console.log("something must move", mustMove);
         }
       }
 
@@ -312,10 +349,8 @@ function moveChoice(
     }
   }
   if (colorNumber === -1 || target.classList.contains("king")) {
-    console.log("fire");
     if (board[yCoord - 1]) {
       if (board[yCoord - 1][xCoord - 1] === 0) {
-        console.log("false");
         const id = arrayCoordinatesToId(yCoord - 1, xCoord - 1);
         document.getElementById(id).classList.add("highlight");
       } else if (
@@ -338,6 +373,71 @@ function moveChoice(
         const id = arrayCoordinatesToId(yCoord - 2, xCoord + 2);
         document.getElementById(id).classList.add("highlight");
       }
+    }
+  }
+}
+
+function checkContinuedMove(
+  yCoord: number,
+  xCoord: number,
+  target: EventTarget,
+  colorNumber: number
+) {
+  const oppositeColor = colorNumber * -1;
+  const squareId = parseInt(arrayCoordinatesToId(yCoord, xCoord));
+  if (colorNumber === 1 || target.classList.contains("king")) {
+    if (
+      board[yCoord + 2] &&
+      board[yCoord + 1][xCoord - 1] === oppositeColor &&
+      board[yCoord + 2][xCoord - 2] === 0
+    ) {
+      const id = arrayCoordinatesToId(yCoord + 2, xCoord - 2);
+      document.getElementById(id).classList.add("highlight");
+      mustMove = squareId;
+    }
+    // if (board[yCoord + 1][xCoord + 1] === 0) {
+    //   const id = arrayCoordinatesToId(yCoord + 1, xCoord + 1);
+    //   document.getElementById(id).classList.add("highlight");
+    // } else
+    if (
+      board[yCoord + 2] &&
+      board[yCoord + 1][xCoord + 1] === oppositeColor &&
+      board[yCoord + 2][xCoord + 2] === 0
+    ) {
+      const id = arrayCoordinatesToId(yCoord + 2, xCoord + 2);
+      document.getElementById(id).classList.add("highlight");
+      mustMove = squareId;
+    }
+  }
+
+  if (colorNumber === -1 || target.classList.contains("king")) {
+    // if (board[yCoord - 1]) {
+    //   if (board[yCoord - 1][xCoord - 1] === 0) {
+    //     const id = arrayCoordinatesToId(yCoord - 1, xCoord - 1);
+    //     document.getElementById(id).classList.add("highlight");
+    //   } else
+    if (
+      board[yCoord - 2] &&
+      board[yCoord - 1][xCoord - 1] === oppositeColor &&
+      board[yCoord - 2][xCoord - 2] === 0
+    ) {
+      const id = arrayCoordinatesToId(yCoord - 2, xCoord - 2);
+      document.getElementById(id).classList.add("highlight");
+      mustMove = squareId;
+    }
+
+    // if (board[yCoord - 1][xCoord + 1] === 0) {
+    //   const id = arrayCoordinatesToId(yCoord - 1, xCoord + 1);
+    //   document.getElementById(id).classList.add("highlight");
+    // } else
+    if (
+      board[yCoord - 2] &&
+      board[yCoord - 1][xCoord + 1] === oppositeColor &&
+      board[yCoord - 2][xCoord + 2] === 0
+    ) {
+      const id = arrayCoordinatesToId(yCoord - 2, xCoord + 2);
+      document.getElementById(id).classList.add("highlight");
+      mustMove = squareId;
     }
   }
 }
